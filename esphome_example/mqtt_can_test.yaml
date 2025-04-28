@@ -10,9 +10,6 @@ esp32:
   board: esp32-c3-devkitm-1
   framework:
     type: esp-idf
-#    sdkconfig_options:
-#      CONFIG_LOG_MAXIMUM_LEVEL: "4"
-#      CONFIG_LOG_DEFAULT_LEVEL: "4"
 
 
 # Enable logging
@@ -32,7 +29,8 @@ mqtt:
   # Yes, it is ugly, but this way it required the least amount of
   # patching to inject the custom transport.
   broker: 0.0.0.0
-  # log_topic: null
+  # Enabled logging causes a lot of traffic.
+  log_topic: null
   # Needed to have multiple instances of the same device
   discovery_unique_id_generator: mac
 
