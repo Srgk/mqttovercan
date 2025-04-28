@@ -1,0 +1,57 @@
+; Auto generated code by esphome
+
+[common]
+lib_deps =
+build_flags =
+upload_flags =
+
+; ========== AUTO GENERATED CODE BEGIN ===========
+[platformio]
+description = ESPHome 2025.3.3
+[env:mqtt_can_test]
+board = esp32-c3-devkitm-1
+;board_build.partitions = partitions.csv
+board_upload.flash_size = 4MB
+build_flags =
+    -DH42_CAN_PATCH=1
+    -DCORE_DEBUG_LEVEL=5
+    -DESPHOME_LOG_LEVEL=ESPHOME_LOG_LEVEL_VERBOSE
+    -DUSE_ESP32
+    -DUSE_ESP32_FRAMEWORK_ESP_IDF
+    -DUSE_ESP32_VARIANT_ESP32C3
+    -DUSE_ESP_IDF
+    -Wno-nonnull-compare
+    -Wno-sign-compare
+    -Wno-unused-but-set-variable
+    -Wno-unused-variable
+    -fno-exceptions
+
+extra_scripts =
+    post:post_build.py
+framework = espidf
+lib_deps =
+    bblanchon/ArduinoJson@6.18.5
+    ${common.lib_deps}
+lib_ldf_mode = off
+platform = https://github.com/pioarduino/platform-espressif32.git#51.03.07
+platform_packages =
+    pioarduino/framework-espidf@https://github.com/pioarduino/esp-idf/releases/download/v5.1.5/esp-idf-v5.1.5.zip
+    espressif/toolchain-esp32ulp@2.35.0-20220830
+; =========== AUTO GENERATED CODE END ============
+
+#upload_port = /dev/ttyACM0
+#upload_port = /dev/ttyUSB0
+monitor_port = /dev/ttyACM1
+
+build_type = debug
+debug_tool = minimodule
+
+upload_protocol = minimodule
+
+monitor_filters=esp32_exception_decoder, direct
+
+debug_init_break = tbreak setup
+
+debug_server =
+    $PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/bin/openocd
+    -f$PLATFORMIO_CORE_DIR/packages/tool-openocd-esp32/share/openocd/scripts/board/esp32c3-ftdi.cfg

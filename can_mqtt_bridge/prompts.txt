@@ -1,0 +1,23 @@
+I need you to write a simple server app in python.
+I already have 2 functions:
+ * def send_data_to_node(node_id: int, data: bytes) -> None
+    ** This function is synchronous and sends data to a node.
+    ** The maximum size of data that can be sent with one call is 1024 bytes.
+ * def receive_data() -> tuple[int, bytes] # returns (node_id, data)
+    ** This function is synchronous and returns the data received from a node.
+
+The Server app should route traffic between these 2 functions and another TCP server.
+When we get data from node for the first time we should open a new connection to the TCP server and send the data to it.
+When more data comes from the same node we should send it to the existing TCP connection.
+When we get data from TCP server through an existing connection we should send it to the corresponding node.
+So a list of connections should be maintained that would map node_id to TCP connection.
+If we get a disconnect from TCP server we should remove the connection from the list.
+
+Implementation notes:
+* User python type annotations
+* Note that there is a limit on the size of data that can be sent to a node in one call, so
+  if the data is larger than that, we should split it into chunks and send each chunk separately.
+* Note that the send_data_to_node and receive_data functions are synchronous,
+  so we should use threading to handle the TCP server connections.
+* The Server should be implemented as a class that takes another TCP server address and port as parameters.
+* Make max send size a constant

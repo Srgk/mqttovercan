@@ -1,0 +1,83 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8f86e9d..6991bfa 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -8,7 +8,7 @@ list(TRANSFORM srcs PREPEND ${CMAKE_CURRENT_LIST_DIR}/)
+ idf_component_register(SRCS "${srcs}"
+                     INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/include
+                     PRIV_INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR}/lib/include
+-                    REQUIRES esp_event tcp_transport
++                    REQUIRES esp_event tcp_transport can_transport driver
+                     PRIV_REQUIRES esp_timer http_parser esp_hw_support heap
+                     KCONFIG ${CMAKE_CURRENT_LIST_DIR}/Kconfig
+                     )
+diff --git a/include/mqtt_client.h b/include/mqtt_client.h
+index 66558aa..b3d8aae 100644
+--- a/include/mqtt_client.h
++++ b/include/mqtt_client.h
+@@ -129,8 +129,9 @@ typedef enum esp_mqtt_transport_t {
+     MQTT_TRANSPORT_OVER_TCP, /*!< *MQTT* over TCP, using scheme: ``MQTT`` */
+     MQTT_TRANSPORT_OVER_SSL, /*!< *MQTT* over SSL, using scheme: ``MQTTS`` */
+     MQTT_TRANSPORT_OVER_WS,  /*!< *MQTT* over Websocket, using scheme:: ``ws`` */
+-    MQTT_TRANSPORT_OVER_WSS  /*!< *MQTT* over Websocket Secure, using scheme:
++    MQTT_TRANSPORT_OVER_WSS, /*!< *MQTT* over Websocket Secure, using scheme:
+                               ``wss`` */
++    MQTT_TRANSPORT_OVER_H42CAN,
+ } esp_mqtt_transport_t;
+ 
+ /**
+diff --git a/mqtt_client.c b/mqtt_client.c
+index bcd1a74..1f695e8 100644
+--- a/mqtt_client.c
++++ b/mqtt_client.c
+@@ -9,6 +9,10 @@
+ #include "mqtt_msg.h"
+ #include "mqtt_outbox.h"
+ 
++#if H42_CAN_PATCH
++#  include "h42_can.h"
++#endif
++
+ _Static_assert(sizeof(uint64_t) == sizeof(outbox_tick_t), "mqtt-client tick type size different from outbox tick type");
+ #ifdef ESP_EVENT_ANY_ID
+ _Static_assert(MQTT_EVENT_ANY == ESP_EVENT_ANY_ID, "mqtt-client event enum does not match the global EVENT_ANY_ID");
+@@ -28,6 +32,9 @@ ESP_EVENT_DEFINE_BASE(MQTT_EVENTS);
+ #define MQTT_OVER_SSL_SCHEME "mqtts"
+ #define MQTT_OVER_WS_SCHEME  "ws"
+ #define MQTT_OVER_WSS_SCHEME "wss"
++#if H42_CAN_PATCH
++#  define MQTT_OVER_H42CAN_SCHEME "h42can"
++#endif
+ 
+ const static int STOPPED_BIT = (1 << 0);
+ const static int RECONNECT_BIT = (1 << 1);
+@@ -369,6 +376,16 @@ static esp_err_t esp_mqtt_client_create_transport(esp_mqtt_client_handle_t clien
+ #else
+             ESP_LOGE(TAG, "Please enable MQTT_ENABLE_SSL to use %s", client->config->scheme);
+             ret = ESP_FAIL;
++#endif
++#if H42_CAN_PATCH
++        } else if (strncasecmp(client->config->scheme, MQTT_OVER_H42CAN_SCHEME, sizeof(MQTT_OVER_H42CAN_SCHEME)) == 0) {
++            if (h42_can_init() != ESP_OK) {
++                ret = ESP_FAIL;
++            } else {
++                esp_transport_list_add(client->transport_list,
++                       h42_can_make_esp_transport(),
++                       MQTT_OVER_H42CAN_SCHEME);
++            }
+ #endif
+         } else {
+             ESP_LOGE(TAG, "Not support this mqtt scheme %s", client->config->scheme);
+@@ -583,6 +600,12 @@ esp_err_t esp_mqtt_set_config(esp_mqtt_client_handle_t client, const esp_mqtt_cl
+     if (config->broker.address.transport) {
+         free(client->config->scheme);
+         client->config->scheme = NULL;
++#if H42_CAN_PATCH
++        if (strncasecmp(config->broker.address.hostname, "0.0.0.0", sizeof("0.0.0.0")) == 0) {
++            client->config->scheme = create_string(MQTT_OVER_H42CAN_SCHEME, strlen(MQTT_OVER_H42CAN_SCHEME));
++            ESP_MEM_CHECK(TAG, client->config->scheme, goto _mqtt_set_config_failed);
++        } else 
++#endif
+         if (config->broker.address.transport == MQTT_TRANSPORT_OVER_TCP) {
+             client->config->scheme = create_string(MQTT_OVER_TCP_SCHEME, strlen(MQTT_OVER_TCP_SCHEME));
+             ESP_MEM_CHECK(TAG, client->config->scheme, goto _mqtt_set_config_failed);

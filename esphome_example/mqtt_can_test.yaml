@@ -1,0 +1,45 @@
+esphome:
+  name: mqtt_can_test
+  # Needed to have multiple instances of the same device
+  name_add_mac_suffix: true
+  platformio_options:
+    build_flags:
+      - -DH42_CAN_PATCH=1
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+#    sdkconfig_options:
+#      CONFIG_LOG_MAXIMUM_LEVEL: "4"
+#      CONFIG_LOG_DEFAULT_LEVEL: "4"
+
+
+# Enable logging
+logger:
+  level: VERBOSE
+
+# Dummy. Not used, but needed for mqtt to compile.
+network:
+
+
+external_components:
+  - source: .
+    components: [mqtt]
+
+mqtt:
+  # 0.0.0.0 is a magic address that triggers MQTT over CAN.
+  # Yes, it is ugly, but this way it required the least amount of
+  # patching to inject the custom transport.
+  broker: 0.0.0.0
+  # log_topic: null
+  # Needed to have multiple instances of the same device
+  discovery_unique_id_generator: mac
+
+switch:
+  - platform: gpio
+    id: onboard_led_1
+    pin: GPIO8
+    inverted: true
+    name: OnboardLED
+

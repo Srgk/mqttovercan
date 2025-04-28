@@ -1,0 +1,3 @@
+[submodule "can_transport/isotp-c"]
+	path = can_transport/isotp-c
+	url = https://github.com/SimonCahill/isotp-c.git
