@@ -70,6 +70,7 @@ typedef struct h42_can_daemon {
   uint8_t isotp_last_send_status;
 
   QueueHandle_t out_packet_queue;
+  TaskHandle_t daemon_task;
 } h42_can_daemon_t;
 static h42_can_daemon_t g_daemon = {0};
 
@@ -286,6 +287,15 @@ esp_err_t h42_can_daemon_send(const uint8_t *buf, uint32_t buf_size,
   out_packet->size = buf_size;
   out_packet->sender = xTaskGetCurrentTaskHandle();
   memcpy(out_packet->data, buf, buf_size);
+
+  // Edge case: The sender task is the daemon task itself.
+  // This may happen if logging over mqtt is enabled.
+  // We just drop such messages as it otherwise may cause an endless loop.
+  if (out_packet->sender == daemon->daemon_task) {
+    free(out_packet);
+    return ESP_OK;
+  }
+
   BaseType_t res = xQueueSend(daemon->out_packet_queue, out_packet,
                               pdMS_TO_TICKS(timeout_ms));
   free(out_packet);
@@ -385,10 +395,10 @@ void vTaskCanTransportDaemon(void *pvParameters) {
   esp_err_t err;
   twai_message_t rx_message;
   h42_can_daemon_t *daemon = (h42_can_daemon_t *)pvParameters;
+  daemon->daemon_task = xTaskGetCurrentTaskHandle();
 
   h42_out_packet_t send_item = {0};
   for (;;) {
-
     if (_daemon_get_state(daemon) == DAEMON_STATE_OBTAINING_ADDRESS) {
       err = _daemon_obtain_address(daemon);
       if (err == ESP_OK) {
