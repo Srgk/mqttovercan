@@ -8,8 +8,6 @@ patchflag_path = join(FRAMEWORK_DIR, ".patching-done")
 
 # patch file only if we didn't do it before
 if not isfile(join(FRAMEWORK_DIR, ".patching-done")):
-    original_file = join(FRAMEWORK_DIR, "variants", "standard", "pins_arduino.h")
-    patched_file = join("patches", "1-framework-arduinoavr-add-pin-a8.patch")
     
     print("Apply MQTT client patches")
     env.Execute("rm -fr %s/mqttovercan || true" % (FRAMEWORK_DIR))
