@@ -35,7 +35,7 @@ jobs:
           context: can_mqtt_bridge
           push: true
           # tags: ghcr.io/${{ github.repository }}:latest # Example tag
-          tags: ghcr.io/can_mqtt_bridge:latest # Example tag
+          tags: ghcr.io/srgk/can_mqtt_bridge:latest # Example tag
           
           # You can add more tags based on commit SHA, version, etc.
           # tags: |
