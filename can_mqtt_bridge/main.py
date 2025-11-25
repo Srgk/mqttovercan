@@ -3,6 +3,7 @@ import sys
 from io import TextIOWrapper
 
 import can
+import os
 
 import can_tcp_bridge
 import isotp_can_server
@@ -27,8 +28,11 @@ def make_logger() -> logging.Logger:
 def check_slcan_dongle() -> can.BusABC:
     # Attempt to initialize the SLCAN interface
     # Adjust 'slcan0' to match your system's interface name (e.g., 'COM3' on Windows)
-    bus = can.interface.Bus(interface='slcan', channel='/dev/ttyACM0', bitrate=20000)
-    print("SLCAN dongle detected and initialized successfully!")
+    interface = os.getenv('CAN_INTERFACE', 'slcan')
+    channel = os.getenv('CAN_CHANNEL', '/dev/ttyACM0')
+    bitrate = os.getenv('CAN_BITRATE', 20000)
+    bus = can.interface.Bus(interface=interface, channel=channel, bitrate=bitrate)
+    print("CAN dongle detected and initialized successfully!")
     return bus
 
 
@@ -54,7 +58,10 @@ def app_main(bus: can.BusABC) -> None:
     log = make_logger()
     can_srv = isotp_can_server.IsotpCanServer(bus, log)
     can_srv_shimmed = DgbShim(can_srv)
-    bridge = can_tcp_bridge.CanTcpBridge(can_srv_shimmed, "192.168.0.62", 1883, log)
+
+    host = os.getenv('MQTT_HOST', '192.168.0.62');
+    port = os.getenv('MQTT_PORT', '1833');
+    bridge = can_tcp_bridge.CanTcpBridge(can_srv_shimmed, host, port, log)
     bridge.run()
 
 
