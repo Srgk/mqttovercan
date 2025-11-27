@@ -30,7 +30,7 @@ def check_slcan_dongle() -> can.BusABC:
     # Adjust 'slcan0' to match your system's interface name (e.g., 'COM3' on Windows)
     interface = os.getenv('CAN_INTERFACE', 'slcan')
     channel = os.getenv('CAN_CHANNEL', '/dev/ttyACM0')
-    bitrate = os.getenv('CAN_BITRATE', 20000)
+    bitrate = int(os.getenv('CAN_BITRATE', 20000))
     bus = can.interface.Bus(interface=interface, channel=channel, bitrate=bitrate)
     print("CAN dongle detected and initialized successfully!")
     return bus
@@ -60,7 +60,7 @@ def app_main(bus: can.BusABC) -> None:
     can_srv_shimmed = DgbShim(can_srv)
 
     host = os.getenv('MQTT_HOST', '192.168.0.62');
-    port = os.getenv('MQTT_PORT', '1833');
+    port = int(os.getenv('MQTT_PORT', '1833'));
     bridge = can_tcp_bridge.CanTcpBridge(can_srv_shimmed, host, port, log)
     bridge.run()
 
