@@ -85,7 +85,7 @@ cat > pcf8575.dts <<EOF
 / {
     compatible = "allwinner,sun50i-h616";
     fragment@1 {
-        target = <i2c1>;
+        target = <&i2c1>;
         __overlay__ {
             pcf8575: gpio@20 {
                 compatible = "nxp,pcf8575";
@@ -99,15 +99,14 @@ cat > pcf8575.dts <<EOF
 EOF
 ```
 
-
 ### DTC компилятор.
 
 #### Чтение текущего дерева.
 ```bash
 dtc -I fs -O dts -o extracted.dts /proc/device-tree
 ```
-#### Компиляция.
+#### Компиляция оверлеев.
 ```bash
-dtc -I dts -O dtb -o /boot/overlay-user/mcp2515.dtbo mcp2515.dts
-dtc -I dts -O dtb -o /boot/overlay-user/pcf8575.dtbo pcf8575.dts
+dtc -@ -I dts -O dtb -o /boot/overlay-user/mcp2515.dtbo mcp2515.dts
+dtc -@ -I dts -O dtb -o /boot/overlay-user/pcf8575.dtbo pcf8575.dts
 ```
