@@ -17,7 +17,7 @@ cat > mcp2515.dts <<EOF
 /plugin/;
 
 / {
-    compatible = "allwinner,sun60i-h6";
+    compatible = "allwinner,sun50i-h616";
 
     fragment@0 {
         target-path = "/";
@@ -43,6 +43,7 @@ cat > mcp2515.dts <<EOF
 
     fragment@2 {
         target = <&spi1>;
+        pinctrl-0 = <&spi1_pins>, <&spi1_cs0_pin>;
         __overlay__ {
             status = "okay";
             #address-cells = <1>;
@@ -82,7 +83,7 @@ cat > pcf8575.dts <<EOF
 /plugin/;
 
 / {
-    compatible = "allwinner,sun60i-h6";
+    compatible = "allwinner,sun50i-h616";
     fragment@1 {
         target = <i2c1>;
         __overlay__ {
