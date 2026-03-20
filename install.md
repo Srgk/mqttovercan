@@ -3,7 +3,7 @@
 
 ## Дерево устройств.
 
-### CAN mcp2515
+### CAN `mcp2515`
 
 #### Установка необходимых библиотек
 ```bash
@@ -13,11 +13,62 @@ apt install can-utils
 #### Конфигурация в дереве устройств
 ```bash
 cat > mcp2515.dts <<EOF
+/dts-v1/;
+/plugin/;
 
+/ {
+    compatible = "allwinner,sun60i-h6";
+
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            can0_osc: can0_osc {
+                compatible = "fixed-clock";
+                #clock-cells = <0>;
+                clock-frequency = <8000000>;
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&pio>;
+        __overlay__ {
+            mcp2515_irq_pin: mcp2515_irq_pin {
+                pins = "PD23";
+                function = "irq";
+                bias-pull-up;
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&spi1>;
+        __overlay__ {
+            status = "okay";
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            mcp2515@0 {
+                compatible = "microchip,mcp2515";
+                reg = <0>;
+                spi-max-frequency = <2000000>;
+                clocks = <&can0_osc>;
+
+                pinctrl-names = "default";
+                pinctrl-0 = <&mcp2515_irq_pin>;
+
+                interrupt-parent = <&pio>;
+                interrupts = <8 6 8>;
+
+                status = "okay";
+            };
+        };
+    };
+};
 EOF
 ```
 
-### Расширитель входов/выходов pcf8575
+### Расширитель входов/выходов `pcf8575`
 
 #### Установка необходимых библиотек
 ```bash
