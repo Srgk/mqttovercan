@@ -34,7 +34,7 @@ cat > mcp2515.dts <<EOF
         target = <&pio>;
         __overlay__ {
             mcp2515_irq_pin: mcp2515_irq_pin {
-                pins = "PD23";
+                pins = "PI6";
                 function = "irq";
                 bias-pull-up;
             };
@@ -48,7 +48,7 @@ cat > mcp2515.dts <<EOF
             #address-cells = <1>;
             #size-cells = <0>;
 
-            mcp2515@0 {
+            can0: mcp2515@0 {
                 compatible = "microchip,mcp2515";
                 reg = <0>;
                 spi-max-frequency = <2000000>;
@@ -78,16 +78,23 @@ apt install gpiod
 #### Конфигурация в дереве устройств
 ```bash
 cat > pcf8575.dts <<EOF
-&i2c1 {
-    /* ... other i2c devices ... */
+/dts-v1/;
+/plugin/;
 
-    pcf8575: gpio@20 {
-        compatible = "nxp,pcf8575";
-        reg = <0x20>;
-        gpio-controller;
-        #gpio-cells = <2>;
-        /* Optional: interrupt-parent = <&gpio1>; */
-        /* Optional: interrupts = <17 IRQ_TYPE_LEVEL_LOW>; */
+/ {
+    compatible = "allwinner,sun60i-h6";
+    fragment@1 {
+        target = <i2c1>;
+        __overlay__ {
+            pcf8575: gpio@20 {
+                compatible = "nxp,pcf8575";
+                reg = <0x20>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                /* Optional: interrupt-parent = <&gpio1>; */
+                /* Optional: interrupts = <17 IRQ_TYPE_LEVEL_LOW>; */
+            };
+        };
     };
 };
 EOF
