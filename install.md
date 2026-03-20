@@ -91,8 +91,6 @@ cat > pcf8575.dts <<EOF
                 reg = <0x20>;
                 gpio-controller;
                 #gpio-cells = <2>;
-                /* Optional: interrupt-parent = <&gpio1>; */
-                /* Optional: interrupts = <17 IRQ_TYPE_LEVEL_LOW>; */
             };
         };
     };
