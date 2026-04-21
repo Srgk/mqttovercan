@@ -96,7 +96,7 @@ sudo systemctl restart systemd-networkd
 ```
 На ручнике
 ```bash
-sudo ip link set can0 up type can bitrate 500000
+sudo ip link set can0 up type can bitrate 50000
 ```
 ## Расширитель входов/выходов `pcf8575`.
 
