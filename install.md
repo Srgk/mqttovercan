@@ -122,9 +122,12 @@ cat > pcf8575.dts <<EOF
 
 / {
     compatible = "allwinner,sun50i-h616";
+
     fragment@1 {
         target = <&i2c1>;
         __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
             pcf8575: gpio@20 {
                 compatible = "nxp,pcf8575";
                 reg = <0x20>;
