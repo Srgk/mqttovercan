@@ -82,7 +82,7 @@ EOF
 ```
 ### Конфигурация интерфейса
 ```bash
-cat > /etc/systemd/network/80-can0.network <<EOF
+sudo cat > /etc/systemd/network/80-can0.network <<EOF
 [Match]
 Name=can0
 
@@ -90,7 +90,10 @@ Name=can0
 BitRate=50K
 EOF
 ```
-
+```bash
+sudo systemctl enable systemd-networkd
+sudo systemctl restart systemd-networkd
+```
 ## Расширитель входов/выходов `pcf8575`.
 
 #### Подключение
