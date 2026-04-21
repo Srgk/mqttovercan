@@ -80,6 +80,16 @@ cat > mcp2515.dts <<EOF
 };
 EOF
 ```
+### Конфигурация интерфейса
+```bash
+cat > /etc/systemd/network/80-can0.network <<EOF
+[Match]
+Name=can0
+
+[CAN]
+BitRate=50K
+EOF
+```
 
 ## Расширитель входов/выходов `pcf8575`.
 
