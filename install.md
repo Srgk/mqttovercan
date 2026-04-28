@@ -80,6 +80,9 @@ cat > mcp2515.dts <<EOF
 };
 EOF
 ```
+```bash
+armbian-add-overlay mcp2515.dts
+```
 ### Конфигурация интерфейса
 ```bash
 sudo cat > /etc/systemd/network/80-can0.network <<EOF
@@ -139,7 +142,9 @@ cat > pcf8575.dts <<EOF
 };
 EOF
 ```
-
+```bash
+armbian-add-overlay pcf8575.dts
+```
 ### DTC компилятор.
 
 #### Чтение текущего дерева.
