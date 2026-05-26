@@ -117,7 +117,7 @@ sudo ip link set can0 up type can bitrate 50000
 
 #### Установка необходимых библиотек.
 ```bash
-apt install gpiod
+apt install gpiod libgpiod-dev
 ```
 
 #### Конфигурация в дереве устройств.
@@ -139,6 +139,7 @@ cat > pcf8575.dts <<EOF
                 reg = <0x20>;
                 gpio-controller;
                 #gpio-cells = <2>;
+                status = "okay";
             };
         };
     };
@@ -147,6 +148,10 @@ EOF
 ```
 ```bash
 armbian-add-overlay pcf8575.dts
+```
+Добавить в файл boot/orangepiEnv.txt загрузку оверлея.
+```
+overlays=pi-i2c1
 ```
 ### DTC компилятор.
 
