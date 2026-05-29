@@ -30,10 +30,10 @@ apt install can-utils
 cat > mcp2515.dts <<EOF
 /dts-v1/;
 /plugin/;
-
-/ {
+    
+/ {     
     compatible = "allwinner,sun50i-h616";
-
+        
     fragment@0 {
         target-path = "/";
         __overlay__ {
@@ -58,12 +58,12 @@ cat > mcp2515.dts <<EOF
 
     fragment@2 {
         target = <&spi1>;
-        pinctrl-0 = <&spi1_pins>, <&spi1_cs0_pin>;
         __overlay__ {
             status = "okay";
             #address-cells = <1>;
             #size-cells = <0>;
-
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi1_pins>, <&spi1_cs0_pin>;
             can0: mcp2515@0 {
                 compatible = "microchip,mcp2515";
                 reg = <0>;
