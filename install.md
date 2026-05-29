@@ -1,6 +1,4 @@
-```mermaid
-  info
-```
+
 # Установка armbian.
 
 Обрудование:
@@ -15,9 +13,11 @@
 
 |Orange Pi Zero 2w|mcp2515|
 |:-:|:-:|
-|1|1|
-|1|1|
-|1|1|
+|PI6|INT|
+|PH6|SCK|
+|PH7|MISI|
+|PH8|MISO|
+|PH5|CS|
 
 
 #### Установка необходимых библиотек
@@ -149,7 +149,7 @@ EOF
 ```bash
 armbian-add-overlay pcf8575.dts
 ```
-Добавить в файл boot/orangepiEnv.txt загрузку оверлея.
+Добавить в файл /boot/orangepiEnv.txt загрузку оверлея.
 ```
 overlays=pi-i2c1
 ```
