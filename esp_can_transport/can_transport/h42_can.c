@@ -7,9 +7,9 @@
 #include <driver/twai.h>
 #include <nvs_flash.h>
 
-#define CAN_TRANSPORT_SPEED TWAI_TIMING_CONFIG_20KBITS()
-#define CAN_TRANSPORT_TX_GPIO 21
-#define CAN_TRANSPORT_RX_GPIO 20
+#define CAN_TRANSPORT_SPEED TWAI_TIMING_CONFIG_50KBITS()
+#define CAN_TRANSPORT_TX_GPIO 16
+#define CAN_TRANSPORT_RX_GPIO 17
 
 typedef struct h42_can_transport {
   h42_can_address_t address;
