@@ -15,6 +15,9 @@
 #include <nvs_flash.h>
 #include <string.h>
 
+#include "esp_efuse.h"
+#include "esp_efuse_table.h"
+
 /*
 Arbitration ID format: (29 bits)
  | 8 bits random seed | 2 bits: unused | 3 bits: msg type | 8 bits: src address
@@ -107,7 +110,8 @@ static void _daemon_isotp_reset(h42_can_daemon_t *daemon) {
  */
 static esp_err_t _daemon_obtain_address(h42_can_daemon_t *daemon) {
   uint8_t chip_id[8] = {0}; // only first 6 bytes matter
-  esp_efuse_mac_get_default(&chip_id[0]);
+  esp_efuse_read_field_blob(ESP_EFUSE_MAC_FACTORY, &chip_id[0], 48);
+  //esp_efuse_mac_get_default(&chip_id[0]);
   twai_message_t addr_request_msg = {
       .identifier =
           _msg_make_id(MSG_TYPE_ADDRESS_REQUEST, H42_CAN_ADDRESS_BROADCAST,
