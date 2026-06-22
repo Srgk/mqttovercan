@@ -4,6 +4,6 @@ idf_component_register(
       isotp-c/isotp.c
       h42_can.c  h42_can_daemon.c h42_isotp.c
     INCLUDE_DIRS "include" "lib/include" "isotp-c"
-    REQUIRES tcp_transport nvs_flash driver)
+    REQUIRES tcp_transport nvs_flash driver efuse)
 
 target_compile_options(${COMPONENT_LIB} PRIVATE -Werror=all) 
