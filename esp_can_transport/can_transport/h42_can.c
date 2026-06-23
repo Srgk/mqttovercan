@@ -7,7 +7,7 @@
 #include <driver/twai.h>
 #include <nvs_flash.h>
 
-#define CAN_TRANSPORT_SPEED TWAI_TIMING_CONFIG_50KBITS()
+#define CAN_TRANSPORT_SPEED TWAI_TIMING_CONFIG_250KBITS()
 #define CAN_TRANSPORT_TX_GPIO 16
 #define CAN_TRANSPORT_RX_GPIO 17
 
